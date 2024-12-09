@@ -74,6 +74,11 @@ admin.add_user('user2')
 admin.add_user('user3')
 admin.add_user('user4')
 admin.print_users()
-admin.remove_user(2)
+admin.remove_user(4)
 admin.print_users()
+
+user = User()
+user.user_name = 'user1'
+
+print(f"User {user.user_name}, id - {user_id}, access level - {user.access_level}")
 

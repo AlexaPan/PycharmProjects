@@ -77,3 +77,8 @@ admin.print_users()
 admin.remove_user(4)
 admin.print_users()
 
+user = User()
+user.user_name = 'user1'
+
+print(f"User {user.user_name}, id - {user.get_user_id()}, access level - {user.access_level}")
+
