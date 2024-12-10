@@ -10,6 +10,14 @@ import wave
 from gtts import gTTS
 import os
 from langdetect import detect
+from pydub import AudioSegment
+import speech_recognition as sr
+import logging
+
+
+#turn on logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Инициализация клиента OpenAI
 client = OpenAI(
@@ -30,6 +38,31 @@ def start_message(message):
     user_language = 'English'  # или получайте язык от пользователя
     task = generate_daily_task(user_language)
     bot.send_message(message.chat.id, f'Here is your daily task:\n{task}')
+
+@bot.message_handler(commands=['voice']) #Voice command
+def voice_handler(message):
+    voice_file = bot.get_file(message.voice.file_id)
+    voice_data = bot.download_file(voice_file.file_path)
+
+    #save voice data to file
+    with open('voice.ogg', 'wb') as new_file:
+        new_file.write(voice_data)
+
+    #convert ogg to wav
+    audio = AudioSegment.from_ogg('voice.ogg')
+    audio.export('voice.wav', format='wav')
+
+    #recognize voice
+    recognizer = sr.Recognizer()
+    with sr.AudioFile('voice.wav') as source:
+        audio_data = recognizer.record(source)
+        try:
+            text = recognizer.recognize_google(audio_data, language='ru-RU')
+            bot.reply_to(message, f'Вы сказали: {text}')
+        except sr.UnknownValueError:
+            bot.reply_to(message, 'Не удалось распознать речь.')
+        except sr.RequestError as e:
+            bot.reply_to(message, f'Ошибка сервиса распознавания: {e}')
 
 @bot.message_handler(commands=['help']) #Help command
 def help_message(message):
