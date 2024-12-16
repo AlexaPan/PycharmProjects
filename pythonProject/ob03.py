@@ -174,15 +174,15 @@ def load_zoo(filename = 'zoo_data.json'):
 
 
 new_zoo_created = load_zoo() #Create zoo
-# animal = Animal("Lion", 5, "Roar")
-# #animal.make_sound()
-# new_animal = Bird("Raven", 3, "Karr")
-# new_zoo_created.animals = [Bird("Parrot", 3, "Chirp"),
-#                    Mammal("Dog", 5, "Woof"), Reptile("Snake", 2, "Hiss")]
-# new_zoo_created.add_animal(new_animal)
-#
-# new_zoo_created.zookeepers = [ZooKeeper("John"), ZooKeeper("Sally")]
-# new_zoo_created.veterinarians = [Veterinarian("Jane")]
+animal = Animal("Lion", 5, "Roar")
+#animal.make_sound()
+new_animal = Bird("Raven", 3, "Karr")
+new_zoo_created.animals = [Bird("Parrot", 3, "Chirp"),
+                   Mammal("Dog", 5, "Woof"), Reptile("Snake", 2, "Hiss")]
+new_zoo_created.add_animal(new_animal)
+
+new_zoo_created.zookeepers = [ZooKeeper("John"), ZooKeeper("Sally")]
+new_zoo_created.veterinarians = [Veterinarian("Jane")]
 
 print_zoo_info(new_zoo_created)
 animal_sound(new_zoo_created)
