@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 # Инициализация клиента OpenAI
 client = OpenAI(
-    api_key="sk-wEEmPheExn93C3N9vcOwwAl6jFDPLYAs",
+    api_key="sk-eojihWMYuwlwO4oNjNMX8DbkkkBtLg7I",
     base_url="https://api.proxyapi.ru/openai/v1",
 )
 
