@@ -1,0 +1,37 @@
+import pygame
+
+# Инициализация Pygame
+pygame.init()
+
+# Настройки экрана
+SCREEN_WIDTH = 400
+SCREEN_HEIGHT = 300
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Rotate Image Example")
+
+# Цвета
+BLACK = (0, 0, 0)
+
+# Загрузка изображения
+snake_head = pygame.image.load("head.png")  # Убедитесь, что файл существует
+
+# Основной цикл
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Очистка экрана
+    screen.fill(BLACK)
+
+    # Пример поворота изображения
+    direction = "RIGHT"  # Направление может быть "UP", "DOWN", "LEFT", "RIGHT"
+    angles = {"UP": 0, "RIGHT": -90, "DOWN": 180, "LEFT": 90}
+    rotated_image = pygame.transform.rotate(snake_head, angles[direction])
+    screen.blit(rotated_image, (100, 100))  # Координаты верхнего левого угла
+
+    # Обновление экрана
+    pygame.display.flip()
+
+pygame.quit()
