@@ -1,0 +1,95 @@
+import pygame
+import random
+
+# Инициализация Pygame
+pygame.init()
+
+# Константы
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+PLAYER_SPEED = 5
+ENEMY_SPEED = 3
+OBSTACLE_WIDTH = 50
+OBSTACLE_HEIGHT = 50
+
+# Цвета
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+
+# Создание экрана
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Game with Enemies and Obstacles")
+
+# Класс игрока
+class Player:
+    def __init__(self):
+        self.rect = pygame.Rect(100, 100, 50, 50)
+
+    def move(self, dx, dy):
+        self.rect.x += dx * PLAYER_SPEED
+        self.rect.y += dy * PLAYER_SPEED
+        self.rect.clamp_ip(screen.get_rect())  # Ограничиваем движение игрока в пределах экрана
+
+# Класс противника
+class Enemy:
+    def __init__(self):
+        self.rect = pygame.Rect(random.randint(200, 700), random.randint(200, 500), 50, 50)
+
+    def move_towards_player(self, player_rect):
+        if self.rect.x < player_rect.x:
+            self.rect.x += ENEMY_SPEED
+        elif self.rect.x > player_rect.x:
+            self.rect.x -= ENEMY_SPEED
+
+        if self.rect.y < player_rect.y:
+            self.rect.y += ENEMY_SPEED
+        elif self.rect.y > player_rect.y:
+            self.rect.y -= ENEMY_SPEED
+
+# Класс препятствия
+class Obstacle:
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, OBSTACLE_WIDTH, OBSTACLE_HEIGHT)
+
+# Создаем игрока, противника и препятствия
+player = Player()
+enemy = Enemy()
+obstacles = [Obstacle(300, 300), Obstacle(500, 400), Obstacle(400, 200)]
+
+# Основной игровой цикл
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    keys = pygame.key.get_pressed()
+    dx, dy = 0, 0
+    if keys[pygame.K_LEFT]:
+        dx = -1
+    if keys[pygame.K_RIGHT]:
+        dx = 1
+    if keys[pygame.K_UP]:
+        dy = -1
+    if keys[pygame.K_DOWN]:
+        dy = 1
+
+    # Движение игрока
+    player.move(dx, dy)
+
+    # Движение противника
+enemy.move_towards_player(player.rect)
+
+    # Отрисовка
+screen.fill(WHITE)
+pygame.draw.rect(screen, GREEN, player.rect)  # Игрок
+pygame.draw.rect(screen, RED, enemy.rect)      # Противник
+for obstacle in obstacles:
+    pygame.draw.rect(screen, BLACK, obstacle.rect)  # Препятствия
+
+    pygame.display.flip()
+    pygame.time.Clock().tick(60)
+
+pygame.quit()
