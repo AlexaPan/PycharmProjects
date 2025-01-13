@@ -7,7 +7,7 @@ root = tk.Tk()
 root.title("Auto-Resizing Buttons")
 
 # Создаем кнопки
-button1 = tk.Button(root, text="Button 1", command=lambda: button_click(1))
+button1 = tk.Button(root, text="Button 1", command= button_click(1))
 button2 = tk.Button(root, text="Button 2", command=lambda: button_click(2))
 button3 = tk.Button(root, text="Button 3", command=lambda: button_click(3))
 

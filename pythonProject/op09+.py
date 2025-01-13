@@ -13,6 +13,13 @@ from langdetect import detect
 from pydub import AudioSegment
 import speech_recognition as sr
 import logging
+from dotenv import load_dotenv
+
+load_dotenv()
+
+#load token
+api_key_env = os.environ.get("api_key")
+TOKEN = os.environ.get("TOKEN_lang_bot")
 
 
 #turn on logging
@@ -21,11 +28,11 @@ logger = logging.getLogger(__name__)
 
 # Инициализация клиента OpenAI
 client = OpenAI(
-    api_key="sk-eojihWMYuwlwO4oNjNMX8DbkkkBtLg7I",
+    api_key=api_key_env,
     base_url="https://api.proxyapi.ru/openai/v1",
 )
 
-bot = telebot.TeleBot("7704969716:AAFe8rXazN5wogHgb_a2LvNWSljB2mWHeM8") #Import token
+bot = telebot.TeleBot(TOKEN) #Import token
 
 
 @bot.message_handler(commands=['start']) #Start command
