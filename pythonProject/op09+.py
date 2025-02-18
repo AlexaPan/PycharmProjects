@@ -23,8 +23,10 @@ TOKEN = os.environ.get("TOKEN_lang_bot")
 
 
 #turn on logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(filename='app.log',level=logging.INFO)
 logger = logging.getLogger(__name__)
+logging.info('Lang_bot started at %s', datetime.datetime.now())
+
 
 # Инициализация клиента OpenAI
 client = OpenAI(
