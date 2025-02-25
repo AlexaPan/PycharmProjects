@@ -7,6 +7,8 @@
 # - листать параграфы статьи;
 # - перейти на одну из внутренних статей.
 # 4. Позволять пользователю выйти из программы.
+
+
 from anyio import sleep
 from selenium import webdriver
 from selenium.webdriver import Keys
@@ -27,14 +29,55 @@ def search_Wiki(browser, query):
     search_box.clear()
     search_box.send_keys(query)
     search_box.send_keys(Keys.RETURN)
-    time.sleep(3)
+    time.sleep(1)
     return browser.current_url
+
+def hatnotes_print(browser, url):
+
+
+    hatnotes = []
+    contents_w = []
+    links = []
+    titles = []
+    contents = []
+    try:
+        browser.get(url)
+        time.sleep(1)
+        for element in browser.find_elements(By.TAG_NAME, "div"):
+            # Чтобы искать атрибут класса
+            cl = element.get_attribute("class")
+            if cl == "mw-search-result-heading" or cl =="mw-body-content":
+                hatnotes.append(element)
+            if cl =="mw-body-content":
+                contents_w.append(element)
+
+        for i, hatnote in enumerate(hatnotes[:10]):
+            link = hatnote.find_element(By.TAG_NAME, "a").get_attribute("href")
+            links.append(link)
+            title = hatnote.find_element(By.TAG_NAME, "a").get_attribute("title")
+            titles.append(title)
+            print(f"Link {i+1} {title}: {link}")
+
+        for i, content_w in enumerate(contents_w[:10]):
+            content = content_w.find_element(By.TAG_NAME, "p").text
+            if content.strip():
+                contents.append(content)
+            print(f"\nContent {i + 1} {titles[i]}: {content}")
+
+        return titles, contents, links
+
+    except Exception as e:
+        print(f"Error getting page content: {e}")
+        return [], [], []
+
+
 
 #get page content, paragraphs
 def get_page_content(browser, url):
-    browser.get(url)
-    time.sleep(3)
+
     try:
+        browser.get(url)
+        time.sleep(1)
         title = browser.find_element(By.ID, "firstHeading").text
         paragraphs = browser.find_elements(By.TAG_NAME, "p")
 
@@ -45,9 +88,10 @@ def get_page_content(browser, url):
         # Filter links, excluding service links and files
         links = []
         for link in all_links:
-            href = link.get_attriute("href")
+            href = link.get_attribute("href")
             if href and 'wiki/Служебная' not in href and 'wiki/Файл' not in href:
                 links.append(link)
+
         return title, content, links
 
     except Exception as e:
@@ -59,7 +103,7 @@ def print_paragraph(content):
         print("Paragraphs not found.")
         return
     for i, paragraph in enumerate(content):
-        print(f"Paragraph {i}:\n{paragraph}")
+        print(f"Paragraph {i+1}:\n{paragraph}")
         input("Enter for continue...")
 
 def print_links(links):
@@ -68,47 +112,67 @@ def print_links(links):
         return
 
     for i, link in enumerate(links[:10]): #only first 10 links printed
-        print(f"Link {i}: {link}")
+        print(f"Link {i+1}: {link.get_attribute("href")}")
 
     return links[:10]
 
 def main_loop():
+    browser = driver_init()
     print("Use Wiki search!")
-    query = input("Enter the search request: ")
-    url = search_Wiki(query)
-
-    if not url:
-        print("The article not found.")
-        return
 
     while True:
-        title, content, links = get_page_content(url)
+        query = input("Enter the search request: ")
+        url = search_Wiki(browser, query)
 
-        if not title:
-            print("The article might has no title")
-            sleep(3)
-            break
+        if not url:
+            print("The article not found.")
+            return
 
-        print(f"\n Current article: {title}")
-        print("Choose: "
-              "\n 1 - Show paragraph."
-              "\n 2 - Go to the link."
-              "\n 3 - Exit.")
+        while True:
+            #title, content, links = get_page_content(browser, url)
+            title_h, content_h, links_h = hatnotes_print(browser, url)
 
-        choice = "0"
-        while choice not in ["1", "2", "3"]:
-            choice = input("Your choice: ").strip()
+            if not title_h:
+                print("The article might has no title")
+                time.sleep(3)
+                break
 
-        if choice == "1":
-            print_paragraph(content)
 
-        if choice == "2":
-            links_10 = print_links(links)
-            if links_10:
-                link_choice = input("Enter the link's number: ")
+            print(f"\n Current article: {title_h}")
+            print("Choose: "
+                  "\n 1 - Show paragraph."
+                  "\n 2 - Go to the link."
+                  "\n 3 - Exit.")
 
-        if choice == "3":
-            break
+            choice = "0"
+            while choice not in ["1", "2", "3"]:
+                choice = input("Your choice: ").strip()
+
+            if choice == "1":
+                print_paragraph(content_h)
+
+            if choice == "2":
+                links_10 = print_links(links)
+                if links_10:
+                    link_choice = input("Enter the link's number: ")
+                    try:
+                        link_index = int(link_choice) - 1
+                        if 0 <= link_index < len(links_10):
+                            url = links_10[link_index].get_attribute("href")  # переход на выбранную ссылку
+                        else:
+                            print("Invalid link number.")
+                    except ValueError:
+                        print("Please enter a valid number.")
+
+            if choice == "3":
+                browser.quit()
+                return None
+
+
+
+
+main_loop()
+
 
 
 
