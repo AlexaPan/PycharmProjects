@@ -1,0 +1,19 @@
+import matplotlib.pyplot as plt
+
+# Данные
+x = [1, 2, 3, 4, 5]
+y1 = [10, 20, 30, 40, 50]
+y2 = [1, 4, 9, 16, 25]
+
+# Создание графика
+fig, ax1 = plt.subplots()
+ax1.plot(x, y1, color='blue', label='Линия 1')
+ax1.set_xlabel("Ось X")
+ax1.set_ylabel("Ось Y1", color='blue')
+
+ax2 = ax1.twinx()
+ax2.plot(x, y2, color='red', label='Линия 2')
+ax2.set_ylabel("Ось Y2", color='red')
+
+plt.title("График с двумя осями Y")
+plt.show()
