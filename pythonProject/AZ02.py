@@ -13,6 +13,7 @@ from dataclasses import replace
 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 df = pd.read_csv("grades.csv")
 
@@ -76,9 +77,18 @@ downside = Q025 - 1.5 * IQR
 upside = Q075 + 1.5 * IQR
 print(f"For Mathematics: Q025: {Q025}, Q075: {Q075}, IQR: {IQR}, downside is: {downside}, upside is: {upside}")
 
+#plot the data
+df.boxplot()
+plt.title('Boxplot of Student Scores with Outliers')  # Добавляем заголовок
+plt.show()
+
 df_new = replace_outliers(df)
 print(f"New DataFrame with replaced to NaN outliers:\n{df_new}\n")  # Print the new DataFrame without outliers (df_new)
 stat_df(df_new.tail())
 
 print("You can see the result of statistics in the DataFrame if the outliers are changed to NaN. \n "
       "It's changed from the statistics of the original DataFrame")
+
+df_new.boxplot()
+plt.title('Boxplot of Student Scores without Outliers')
+plt.show()
