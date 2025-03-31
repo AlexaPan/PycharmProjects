@@ -1,3 +1,4 @@
+#simple game for guessing words using definitions
 import requests
 from bs4 import BeautifulSoup
 from googletrans import Translator
